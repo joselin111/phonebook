@@ -2,63 +2,65 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .Values.backend.namespace }}
+  name: {{ .Values.namespace }}
+
 ---
 apiVersion: v1
-kind: Secret
+kind: ConfigMap
 metadata:
-  name: backend-db-secret
-  namespace: {{ .Values.backend.namespace }}
-type: Opaque
-stringData:
-  DB_USER: {{ .Values.backend.db.user }}
-  DB_PASSWORD: {{ .Values.backend.db.password }}
+  name: server-config
+  namespace: {{ .Values.namespace }}
+data:
+  MYSQL_USER: devenes
+  MYSQL_DATABASE: phonebook
+  MYSQL_DATABASE_HOST: mysql-service
+
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
-  namespace: {{ .Values.backend.namespace }}
+  name: resultserver-deploy
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: resultserver-deploy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: resultserver-deploy
   template:
     metadata:
       labels:
-        app: backend
+        app: resultserver-deploy
     spec:
       containers:
-        - name: backend
-          image: {{ .Values.backend.image }}
+        - name: resultserver
+          image: {{ .Values.image }}
           ports:
-            - containerPort: {{ .Values.backend.port }}
+            - containerPort: 80
           env:
-            - name: DB_HOST
-              value: {{ .Values.backend.db.host }}
-            - name: DB_USER
+            - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: backend-db-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: backend-db-secret
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              value: {{ .Values.backend.db.name }}
+                  name: {{ .Values.mysqlSecretName }}
+                  key: mysql_admin_password
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.mysqlConfigMap }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
-  namespace: {{ .Values.backend.namespace }}
+  name: resultserver-svc
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: resultserver-deploy
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
-    app: backend
+    app: resultserver-deploy
   ports:
-    - port: {{ .Values.backend.port }}
-      targetPort: {{ .Values.backend.port }}
+    - port: 80
+      targetPort: 80
+      nodePort: {{ .Values.nodePort }}
+
