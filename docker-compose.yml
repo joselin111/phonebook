@@ -1,0 +1,57 @@
+services:
+  webserver:
+    image: joselin721/webserver
+    ports:
+      - "9080:80"
+    depends_on:
+      - database
+    networks:
+      - app-network
+    environment:
+      - DB_HOST=database
+      - DB_USER=dbuser
+      - DB_PASSWORD=dbpassword
+      - DB_NAME=phonebook
+
+  resultserver:
+    image: joselin721/resultserver
+    ports:
+      - "9081:5000"
+    depends_on:
+      - database
+    networks:
+      - app-network
+    environment:
+      - DB_HOST=database
+      - DB_USER=dbuser
+      - DB_PASSWORD=dbpassword
+      - DB_NAME=phonebook
+
+  database:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=phonebook
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=dbpassword
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
+
+
+

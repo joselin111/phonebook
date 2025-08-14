@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phonebook</title>
+    <style>
+        body { max-width:600px; margin:auto; }
+        input, button { width:100%; padding:10px; margin:5px 0; }
+    </style>
+</head>
+<body>
+    <h2>Phonebook</h2>
+    <form action="/add" method="post">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="number" placeholder="Number" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <h3>Existing Records</h3>
+    <table border="1" width="100%">
+        <tr><th>ID</th><th>Name</th><th>Number</th><th>Actions</th></tr>
+        {% for p in persons %}
+        <tr>
+            <form action="/update" method="post">
+                <td>{{ p.id }}<input type="hidden" name="id" value="{{ p.id }}"></td>
+                <td><input type="text" name="name" value="{{ p.name }}"></td>
+                <td><input type="text" name="number" value="{{ p.number }}"></td>
+                <td>
+                    <button type="submit">Update</button>
+            </form>
+            <form action="/delete" method="post" style="display:inline">
+                <input type="hidden" name="id" value="{{ p.id }}">
+                <button type="submit">Delete</button>
+            </form>
+                </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+
