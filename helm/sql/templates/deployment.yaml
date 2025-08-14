@@ -18,6 +18,7 @@ stringData:
   MYSQL_DATABASE: {{ .Values.database.dbName }}
 
 ---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -68,6 +69,20 @@ spec:
             claimName: db-pvc
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+  namespace: {{ .Values.database.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.database.pvcSize }}
+  storageClassName: {{ .Values.database.storageClassName }}
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: database
@@ -96,16 +111,4 @@ spec:
   hostPath:
     path: /mnt/data/mysql
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: db-pvc
-  namespace: {{ .Values.database.namespace }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.database.pvcSize }}
-  storageClassName: {{ .Values.database.storageClassName }}
+
