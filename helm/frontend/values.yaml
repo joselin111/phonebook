@@ -2,4 +2,5 @@ frontend:
   image: joselin721/webserver
   port: 80
   nodePort: 30080
+  backendHost: backend.backend.svc.cluster.local
   namespace: frontend
