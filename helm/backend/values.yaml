@@ -1,9 +1,5 @@
-backend:
+
+resultserver:
   image: joselin721/resultserver
-  port: 5000
-  namespace: backend
-  db:
-    host: database.database.svc.cluster.local
-    user: dbuser
-    password: dbpassword
-    name: phonebook
+  port: 80
+  nodePort: 30002
