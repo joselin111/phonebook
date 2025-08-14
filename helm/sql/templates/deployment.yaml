@@ -34,7 +34,7 @@ spec:
         app: database
     spec:
       securityContext:
-        fsGroup: 999  # ensures MySQL can write to the volume
+        fsGroup: 999   # ensures MySQL can write to the volume
       containers:
         - name: database
           image: {{ .Values.database.image }}
@@ -84,7 +84,6 @@ spec:
       targetPort: {{ .Values.database.port }}
 
 ---
-# Static PersistentVolume (optional for dev environments)
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -97,8 +96,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: {{ .Values.database.storageClassName }}
   hostPath:
-    path: {{ .Values.database.hostPath }}
-
+    path: {{ .Values.database.hostPath }}   # Make sure this folder exists on your host
 
 ---
 apiVersion: v1
