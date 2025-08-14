@@ -1,4 +1,6 @@
-webserver:
-  image: joselin721/webserver
-  port: 80
-  nodePort: 30001
+
+namespace: webserver
+image: joselin721/webserver
+nodePort: 30001
+mysqlSecretName: mysql-secret
+mysqlConfigMap: server-config
