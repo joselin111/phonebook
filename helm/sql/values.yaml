@@ -1,11 +1,10 @@
 database:
+  namespace: database
   image: mysql:8.0
   port: 3306
-  namespace: database
   rootPassword: rootpassword
   dbName: phonebook
   user: dbuser
   password: dbpassword
   pvcSize: 1Gi
-  pvSize: 1Gi
   storageClassName: standard
