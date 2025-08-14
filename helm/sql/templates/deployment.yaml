@@ -1,52 +1,25 @@
 ---
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace }}
+
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: mysql-secret
+  namespace: {{ .Values.namespace }}
 type: Opaque
 stringData:
-  mysql_root_password: {{ .Values.mysql.rootPassword }}
-  mysql_admin_password: {{ .Values.mysql.adminPassword }}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql-config
-data:
-  MYSQL_USER: {{ .Values.mysql.user }}
-  MYSQL_DATABASE: {{ .Values.mysql.database }}
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: mysql-pv
-  labels:
-    type: local
-spec:
-  storageClassName: {{ .Values.mysql.storageClassName }}
-  capacity:
-    storage: {{ .Values.mysql.pvSize }}
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: {{ .Values.mysql.hostPath }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pv-claim
-spec:
-  storageClassName: {{ .Values.mysql.storageClassName }}
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.mysql.pvcSize }}
+  mysql_root_password: {{ .Values.rootPassword }}
+  mysql_admin_password: {{ .Values.adminPassword }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql-deploy
+  namespace: {{ .Values.namespace }}
   labels:
     app: mysql-deploy
 spec:
@@ -61,7 +34,7 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: {{ .Values.mysql.image }}
+          image: {{ .Values.image }}
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -74,33 +47,55 @@ spec:
                   name: mysql-secret
                   key: mysql_admin_password
             - name: MYSQL_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: mysql-config
-                  key: MYSQL_USER
+              value: {{ .Values.user }}
             - name: MYSQL_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: mysql-config
-                  key: MYSQL_DATABASE
+              value: {{ .Values.database }}
           volumeMounts:
-            - name: mysql-persistent-volume
-              mountPath: /var/lib/mysql
+            - mountPath: /var/lib/mysql
+              name: mysql-persistent-volume
       volumes:
         - name: mysql-persistent-volume
           persistentVolumeClaim:
             claimName: mysql-pv-claim
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.storageClassName }}
+  capacity:
+    storage: {{ .Values.pvSize }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.pvPath }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.storageClassName }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.pvcSize }}
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: mysql-service
+  namespace: {{ .Values.namespace }}
   labels:
     app: mysql-deploy
 spec:
   selector:
     app: mysql-deploy
   ports:
-    - port: 3306
+    - protocol: TCP
+      port: 3306
       targetPort: 3306
-      protocol: TCP
