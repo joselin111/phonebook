@@ -34,7 +34,7 @@ spec:
         app: database
     spec:
       securityContext:
-        fsGroup: 999  # allows MySQL to write to mounted volume
+        fsGroup: 999  # ensures MySQL can write to the volume
       containers:
         - name: database
           image: {{ .Values.database.image }}
@@ -84,7 +84,7 @@ spec:
       targetPort: {{ .Values.database.port }}
 
 ---
-# Persistent Volume (use valid path on your host)
+# Static PersistentVolume (optional for dev environments)
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -97,7 +97,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: {{ .Values.database.storageClassName }}
   hostPath:
-    path: /c/Users/YourUsername/mysql-data   # <-- change to an existing folder on your machine
+    path: /c/Users/User/cicdfinal
+
 
 ---
 apiVersion: v1
