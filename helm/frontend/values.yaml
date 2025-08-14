@@ -1,6 +1,4 @@
-frontend:
+webserver:
   image: joselin721/webserver
   port: 80
-  nodePort: 30080
-  backendHost: backend.database.svc.cluster.local  # Make sure the namespace is correct
-  namespace: frontend
+  nodePort: 30001
