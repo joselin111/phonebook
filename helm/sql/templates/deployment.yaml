@@ -97,7 +97,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: {{ .Values.database.storageClassName }}
   hostPath:
-    path: /c/Users/User/cicdfinal
+    path: {{ .Values.database.hostPath }}
 
 
 ---
