@@ -9,4 +9,4 @@ database:
   pvcSize: 1Gi
   pvSize: 1Gi
   storageClassName: standard
-  hostname: database.database.svc.cluster.local   # default hostname for cluster
+  hostPath: /c/mysql-data
