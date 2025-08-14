@@ -3,7 +3,7 @@ backend:
   port: 5000
   namespace: backend
   db:
-    host: database
+    host: database.database.svc.cluster.local
     user: dbuser
     password: dbpassword
     name: phonebook
