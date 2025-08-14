@@ -1,17 +1,5 @@
-replicaCount: 1
-image:
-  repository: joselin721/webserver
-  tag: latest
-  pullPolicy: IfNotPresent
-
-service:
-  type: ClusterIP
+frontend:
+  image: joselin721/webserver
   port: 80
-  targetPort: 80
-
-namespace: frontend
-database:
-  host: database.database.svc.cluster.local
-  user: dbuser
-  password: dbpassword
-  name: phonebook
+  nodePort: 30080
+  namespace: frontend
