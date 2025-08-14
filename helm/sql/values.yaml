@@ -1,10 +1,10 @@
-mysql:
-  image: mysql:5.7
-  rootPassword: J12345j
-  adminPassword: Devenes_1
-  user: devenes
-  database: phonebook
-  pvcSize: 10Gi
-  pvSize: 20Gi
-  hostPath: /mnt/data
-  storageClassName: manual
+namespace: mysql
+image: mysql:5.7
+rootPassword: J12345j
+adminPassword: Devenes_1
+user: devenes
+database: phonebook
+pvPath: /mnt/data
+pvSize: 20Gi
+pvcSize: 10Gi
+storageClassName: manual
