@@ -16,19 +16,6 @@ stringData:
   MYSQL_USER: {{ .Values.database.user }}
   MYSQL_PASSWORD: {{ .Values.database.password }}
   MYSQL_DATABASE: {{ .Values.database.dbName }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: db-pvc
-  namespace: {{ .Values.database.namespace }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.database.pvcSize }}
-
 
 ---
 apiVersion: apps/v1
@@ -92,3 +79,33 @@ spec:
   ports:
     - port: {{ .Values.database.port }}
       targetPort: {{ .Values.database.port }}
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: db-pv
+  namespace: {{ .Values.database.namespace }}
+spec:
+  capacity:
+    storage: {{ .Values.database.pvSize }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .Values.database.storageClassName }}
+  hostPath:
+    path: /mnt/data/mysql
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+  namespace: {{ .Values.database.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.database.pvcSize }}
+  storageClassName: {{ .Values.database.storageClassName }}
