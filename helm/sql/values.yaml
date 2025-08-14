@@ -9,4 +9,4 @@ database:
   pvcSize: 1Gi
   pvSize: 1Gi
   storageClassName: standard
-  hostPath: /c/mysql-data
+  hostPath: /c/mysql-data   # Change this to a valid path on your Windows host
