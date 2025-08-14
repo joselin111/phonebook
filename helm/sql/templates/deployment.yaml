@@ -34,7 +34,7 @@ spec:
         app: database
     spec:
       securityContext:
-        fsGroup: 999   # ensures MySQL can write to the volume
+        fsGroup: 999
       containers:
         - name: database
           image: {{ .Values.database.image }}
@@ -82,23 +82,6 @@ spec:
   ports:
     - port: {{ .Values.database.port }}
       targetPort: {{ .Values.database.port }}
-
----
-# Optional static PV (only for Linux nodes; omit hostPath for Windows/WSL)
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: db-pv
-spec:
-  capacity:
-    storage: {{ .Values.database.pvSize }}
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: {{ .Values.database.storageClassName }}
-  # hostPath is safe only on Linux nodes, not Windows/WSL
-  # hostPath:
-  #   path: /home/<linux-path>/mysql-data
 
 ---
 apiVersion: v1
